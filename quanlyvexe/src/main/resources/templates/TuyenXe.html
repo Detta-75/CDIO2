@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>CHI TIẾT TUYẾN XE</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #f6f8fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            color: #b23b3b;
+            font-size: 40px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        .info-box {
+            border: 1.5px solid #e0e0e0;
+            background: #fff;
+            margin: 0 auto 20px auto;
+            padding: 24px 36px 16px 36px;
+            width: 900px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        }
+        .info-title {
+            color: #b23b3b;
+            font-size: 22px;
+            font-style: italic;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-bottom: 18px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 0;
+            min-width: 240px;
+            max-width: 300px;
+            margin-bottom: 0;
+        }
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 7px;
+            color: #444;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #d3d3d3;
+            border-radius: 6px;
+            font-size: 16px;
+            background: #f9f9f9;
+            transition: border 0.2s;
+            box-sizing: border-box;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border: 1.5px solid #b23b3b;
+            outline: none;
+            background: #fff;
+        }
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 36px;
+            margin: 24px auto 0 auto;
+            width: 100%;
+            max-width: 900px;
+            padding: 0 8px;
+        }
+        .button-row button,
+        .delete-row-btn,
+        .edit-row-btn {
+            width: 140px;
+            height: 48px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            background: #b23b3b;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            transition: background 0.2s, color 0.2s;
+        }
+        .delete-row-btn, .edit-row-btn {
+            width: auto;
+            height: auto;
+            background: none;
+            border: none;
+            box-shadow: none;
+            color: inherit;
+            padding: 0 6px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .delete-row-btn:hover i {
+            color: #e74c3c;
+        }
+        .edit-row-btn:hover i {
+            color: #218838;
+        }
+        .data-table {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+        }
+        .data-table th, .data-table td {
+            border: 1px solid #e0e0e0;
+            padding: 12px 6px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .data-table th {
+            background: #f3f3f3;
+            font-weight: bold;
+            color: #b23b3b;
+        }
+        .data-table tr:nth-child(even) {
+            background: #fafbfc;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100vw; height: 100vh;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.18);
+        }
+        .modal-content {
+            background-color: #fff;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 32px 40px 24px 40px;
+            border: 1.5px solid #e0e0e0;
+            width: 900px;
+            border-radius: 14px;
+            text-align: left;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+        .modal-content h2 {
+            color: #b23b3b;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .modal-content .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-bottom: 18px;
+        }
+        .modal-content .form-group {
+            flex: 1 1 0;
+            min-width: 240px;
+            max-width: 300px;
+        }
+        .modal-content .button-row {
+            justify-content: center;
+            gap: 36px;
+            margin: 24px auto 0 auto;
+        }
+        .close {
+            color: #b23b3b;
+            position: absolute;
+            right: 18px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover { color: #d46a6a; }
+    </style>
+</head>
+<body>
+    <h1>CHI TIẾT TUYẾN XE</h1>
+    <form th:action="@{/addChuyenXe}" method="post">
+        <div class="info-box">
+            <div class="info-title">Thông Tin</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="maTuyen">Mã Tuyến <span style="color:red">*</span></label>
+                    <input type="text" id="maTuyen" name="maTuyen" required placeholder="VD: TX001">
+                </div>
+                <div class="form-group">
+                    <label for="tenTuyen">Tên Tuyến <span style="color:red">*</span></label>
+                    <input type="text" id="tenTuyen" name="tenTuyen" required placeholder="VD: Hà Nội - Hải Phòng">
+                </div>
+                <div class="form-group">
+                    <label for="loaiTuyen">Loại Tuyến <span style="color:red">*</span></label>
+                    <select id="loaiTuyen" name="loaiTuyen" required>
+                        <option value="" disabled selected>Chọn loại tuyến</option>
+                        <option value="MIEN_BAC">Miền Bắc</option>
+                        <option value="MIEN_NAM">Miền Nam</option>
+                        <option value="MIEN_TRUNG">Miền Trung</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="ngayKhoiHanh">Ngày Khởi Hành <span style="color:red">*</span></label>
+                    <input type="date" id="ngayKhoiHanh" name="ngayDi" required>
+                </div>
+                <div class="form-group">
+                    <label for="gioKhoiHanh">Giờ Khởi Hành <span style="color:red">*</span></label>
+                    <input type="time" id="gioKhoiHanh" name="gioDi" required>
+                </div>
+                <div class="form-group">
+                    <label for="soGhe">Số Ghế <span style="color:red">*</span></label>
+                    <input type="number" id="soGhe" name="soGhe" required min="1" placeholder="VD: 40">
+                </div>
+            </div>
+            <div class="button-row">
+                <button type="submit">THÊM</button>
+                <button type="button" onclick="window.location.href='/banve'" class="btn btn-primary">BÁN VÉ</button>
+            </div>
+        </div>
+    </form>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Mã Tuyến</th>
+                <th>Tên Tuyến</th>
+                <th>Loại Tuyến</th>
+                <th>Ngày Đi</th>
+                <th>Giờ Đi</th>
+                <th>Số Ghế</th>
+                <th>Xóa</th>
+                <th>Sửa</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="cx : ${chuyenXeList}">
+                <td th:text="${cx.tuyenXe.maTuyen}"></td>
+                <td th:text="${cx.tuyenXe.tenTuyen}"></td>
+                <td th:text="${cx.tuyenXe.loaiTuyen.displayName}"></td>
+                <td th:text="${cx.ngayDi}"></td>
+                <td th:text="${cx.gioDi}"></td>
+                <td th:text="${cx.soGhe}"></td>
+                <td>
+                    <form th:action="@{/deleteChuyenXe}" method="post" style="display:inline;">
+                        <input type="hidden" name="idChuyenXe" th:value="${cx.id}" />
+                        <button type="submit" class="delete-row-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa chuyến xe này?')" title="Xóa">
+                            <i class="bi bi-trash3" style="font-size: 1.3em; color: #b23b3b;"></i>
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <button type="button" class="edit-row-btn"
+                        th:attr="data-id=${cx.id},data-matuyen=${cx.tuyenXe.maTuyen},data-tentuyen=${cx.tuyenXe.tenTuyen},data-loaituyen=${cx.tuyenXe.loaiTuyen},data-ngaydi=${cx.ngayDi},data-giodi=${cx.gioDi},data-soghe=${cx.soGhe}"
+                        onclick="openEditModalFromButton(this)" title="Sửa">
+                        <i class="bi bi-pencil-square" style="font-size: 1.3em; color: #1a7f37;"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Modal xác nhận xóa -->
+    <div id="confirmModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeConfirmModal()">&times;</span>
+            <h2>Xác nhận xóa</h2>
+            <p>Bạn có chắc chắn muốn xóa tuyến xe có mã <b id="maTuyenToDelete"></b>?</p>
+            <form id="confirmDeleteForm" th:action="@{/deleteTuyenXe}" method="post">
+                <input type="hidden" id="hiddenMaTuyen" name="maTuyen">
+                <div style="text-align:center; margin-top:20px;">
+                    <button type="submit" style="background:#d80000; color:#fff; font-weight:bold; padding:10px 30px; border:none; border-radius:4px;">XÁC NHẬN XÓA</button>
+                    <button type="button" onclick="closeConfirmModal()" style="margin-left:20px; padding:10px 30px; border-radius:4px;">HỦY</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Modal sửa chuyến xe -->
+    <div id="editModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Sửa Chuyến Xe</h2>
+            <form th:action="@{/editChuyenXe}" method="post">
+                <input type="hidden" id="editId" name="id" />
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editMaTuyen">Mã Tuyến</label>
+                        <input type="text" id="editMaTuyen" name="maTuyen" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTenTuyen">Tên Tuyến</label>
+                        <input type="text" id="editTenTuyen" name="tenTuyen" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLoaiTuyen">Loại Tuyến</label>
+                        <select id="editLoaiTuyen" name="loaiTuyen" required>
+                            <option value="MIEN_BAC">Miền Bắc</option>
+                            <option value="MIEN_NAM">Miền Nam</option>
+                            <option value="MIEN_TRUNG">Miền Trung</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editNgayDi">Ngày Khởi Hành</label>
+                        <input type="date" id="editNgayDi" name="ngayDi" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editGioDi">Giờ Khởi Hành</label>
+                        <input type="time" id="editGioDi" name="gioDi" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editSoGhe">Số Ghế</label>
+                        <input type="number" id="editSoGhe" name="soGhe" required>
+                    </div>
+                </div>
+                <div class="button-row">
+                    <button type="submit">LƯU</button>
+                    <button type="button" onclick="closeEditModal()">HỦY</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+    function openDeleteModalForRow(maTuyen) {
+        document.getElementById('confirmModal').style.display = 'block';
+        document.getElementById('maTuyenToDelete').innerText = maTuyen;
+        document.getElementById('hiddenMaTuyen').value = maTuyen;
+    }
+    function closeConfirmModal() {
+        document.getElementById('confirmModal').style.display = 'none';
+    }
+    window.onclick = function(event) {
+        var modal2 = document.getElementById('confirmModal');
+        if (event.target == modal2) modal2.style.display = 'none';
+    }
+    function openEditModalFromButton(btn) {
+        document.getElementById('editModal').style.display = 'block';
+        document.getElementById('editId').value = btn.getAttribute('data-id');
+        document.getElementById('editMaTuyen').value = btn.getAttribute('data-matuyen');
+        document.getElementById('editTenTuyen').value = btn.getAttribute('data-tentuyen');
+        // Set select value for loại tuyến
+        document.getElementById('editLoaiTuyen').value = btn.getAttribute('data-loaituyen');
+        document.getElementById('editNgayDi').value = btn.getAttribute('data-ngaydi');
+        document.getElementById('editGioDi').value = btn.getAttribute('data-giodi');
+        document.getElementById('editSoGhe').value = btn.getAttribute('data-soghe');
+    }
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+    window.onclick = function(event) {
+        var modal = document.getElementById('editModal');
+        if (event.target == modal) modal.style.display = 'none';
+    }
+    </script>
+</body>
+</html>

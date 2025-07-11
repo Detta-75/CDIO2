@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>BÁN VÉ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+body {
+    background-color: #f6f8fa;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+h1 {
+    text-align: center;
+    color: #b23b3b;
+    font-size: 40px;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-bottom: 18px;
+}
+.info-box {
+    border: 1.5px solid #e0e0e0;
+    background: #fff;
+    padding: 24px 36px 16px 36px;
+    border-radius: 12px;
+    min-width: 340px;
+    max-width: 370px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+}
+.info-title {
+    color: #b23b3b;
+    font-size: 22px;
+    font-style: italic;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+}
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 7px;
+    color: #444;
+}
+.form-group input {
+    padding: 10px 14px;
+    border: 1.5px solid #d3d3d3;
+    border-radius: 6px;
+    font-size: 16px;
+    background: #f9f9f9;
+    transition: border 0.2s;
+    box-sizing: border-box;
+}
+.form-group input:focus {
+    border: 1.5px solid #b23b3b;
+    outline: none;
+    background: #fff;
+}
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 36px;
+    margin: 24px auto 0 auto;
+    width: 100%;
+    max-width: 900px;
+    padding: 0 8px;
+}
+.button-row button {
+    width: 140px;
+    height: 48px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background: #b23b3b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: background 0.2s, color 0.2s;
+}
+.button-row button:hover {
+    background: #d46a6a;
+    color: #fff;
+}
+.data-table {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+}
+.data-table th, .data-table td {
+    border: 1px solid #e0e0e0;
+    padding: 12px 6px;
+    text-align: center;
+    font-size: 16px;
+}
+.data-table th {
+    background: #f3f3f3;
+    font-weight: bold;
+    color: #b23b3b;
+}
+.data-table tr:nth-child(even) {
+    background: #fafbfc;
+}
+.delete-row-btn, .edit-row-btn {
+    width: auto;
+    height: auto;
+    background: none;
+    border: none;
+    box-shadow: none;
+    color: inherit;
+    padding: 0 6px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.delete-row-btn:hover i {
+    color: #e74c3c;
+}
+.edit-row-btn:hover i {
+    color: #218838;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0; width: 100vw; height: 100vh;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.18);
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 32px 40px 24px 40px;
+    border: 1.5px solid #e0e0e0;
+    width: 350px;
+    border-radius: 14px;
+    text-align: left;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+.close {
+    color: #b23b3b;
+    position: absolute;
+    right: 18px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close:hover { color: #d46a6a; }
+#editForm .form-group { margin-bottom: 14px; }
+#editForm label { display: block; margin-bottom: 4px; }
+#editForm input { width: 100%; padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="main-content">
+        <h1>BÁN VÉ</h1>
+        <form th:action="@{/banve/them}" method="post">
+            <div class="container">
+                <div class="info-box">
+                    <div class="info-title">Thông Tin Tuyến</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="maTuyen">Mã Tuyến</label>
+                            <input type="text" id="maTuyen" name="maTuyen" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="ngayKhoiHanh">Ngày Khởi Hành</label>
+                            <input type="date" id="ngayKhoiHanh" name="ngayKhoiHanh" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="gioKhoiHanh">Giờ Khởi Hành</label>
+                            <input type="time" id="gioKhoiHanh" name="gioKhoiHanh" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <div class="info-title">Thông Tin</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="idKhachHang">ID Khách Hàng</label>
+                            <input type="text" id="idKhachHang" name="idKhachHang" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="tenKhachHang">Tên Khách Hàng</label>
+                            <input type="text" id="tenKhachHang" name="tenKhachHang" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="sdt">Số Điện Thoại</label>
+                            <input type="text" id="sdt" name="sdt" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="soVe">Số Vé</label>
+                            <input type="number" id="soVe" name="soVe" min="1" required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-row">
+                <button type="button" onclick="window.location.href='/'">QUAY VỀ</button>
+                <button type="submit">THÊM</button>
+            </div>
+        </form>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Mã KH</th>
+                    <th>Tên KH</th>
+                    <th>SDT</th>
+                    <th>Mã Tuyến</th>
+                    <th>Ngày Đi</th>
+                    <th>Giờ Đi</th>
+                    <th>Số Vé</th>
+                    <th>Thành Tiền</th>
+                    <th>Xóa</th>
+                    <th>Sửa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="ve : ${danhSachVe}">
+                    <td th:text="${ve.idKhachHang}"></td>
+                    <td th:text="${ve.tenKhachHang}"></td>
+                    <td th:text="${ve.sdt}"></td>
+                    <td th:text="${ve.maTuyen}"></td>
+                    <td th:text="${ve.ngayDi}"></td>
+                    <td th:text="${ve.gioDi}"></td>
+                    <td th:text="${ve.soVe}"></td>
+                    <td th:text="${ve.thanhTien}"></td>
+                    <td>
+                        <form th:action="@{/banve/xoa}" method="post" style="margin:0;">
+                            <input type="hidden" name="idVe" th:value="${ve.idVe}" />
+                            <button type="submit" class="delete-row-btn" onclick="return confirm('Bạn có chắc muốn xóa vé này?')" title="Xóa">
+                                <i class="bi bi-trash3" style="font-size: 1.3em; color: #b23b3b;"></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <button type="button"
+                            class="edit-row-btn"
+                            th:data-idve="${ve.idVe}"
+                            th:data-tenkhachhang="${ve.tenKhachHang}"
+                            th:data-sdt="${ve.sdt}"
+                            th:data-ngaydi="${ve.ngayDi}"
+                            th:data-giodi="${ve.gioDi}"
+                            th:data-sove="${ve.soVe}"
+                            onclick="openEditModal(this)" title="Sửa">
+                            <i class="bi bi-pencil-square" style="font-size: 1.3em; color: #1a7f37;"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- Modal sửa vé -->
+        <div id="editModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeEditModal()">&times;</span>
+                <h2 style="color:#b23b3b; text-align:center; margin-bottom:24px;">Sửa Vé</h2>
+                <form id="editForm" th:action="@{/banve/sua}" method="post">
+                    <div class="form-row">
+                        <input type="hidden" id="edit-idVe" name="idVe" />
+                        <div class="form-group">
+                            <label for="edit-tenKhachHang">Tên Khách Hàng</label>
+                            <input type="text" id="edit-tenKhachHang" name="tenKhachHang" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-sdt">Số Điện Thoại</label>
+                            <input type="text" id="edit-sdt" name="sdt" required />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-ngayDi">Ngày Đi</label>
+                            <input type="date" id="edit-ngayDi" name="ngayDi" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-gioDi">Giờ Đi</label>
+                            <input type="time" id="edit-gioDi" name="gioDi" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-soVe">Số Vé</label>
+                            <input type="number" id="edit-soVe" name="soVe" min="1" required />
+                        </div>
+                    </div>
+                    <div class="button-row" style="justify-content:center; margin-top:18px;">
+                        <button type="submit">LƯU</button>
+                        <button type="button" onclick="closeEditModal()">HỦY</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script>
+        function openEditModal(btn) {
+            document.getElementById('edit-idVe').value = btn.getAttribute('data-idve');
+            document.getElementById('edit-tenKhachHang').value = btn.getAttribute('data-tenkhachhang');
+            document.getElementById('edit-sdt').value = btn.getAttribute('data-sdt');
+            document.getElementById('edit-ngayDi').value = btn.getAttribute('data-ngaydi');
+            document.getElementById('edit-gioDi').value = btn.getAttribute('data-giodi');
+            document.getElementById('edit-soVe').value = btn.getAttribute('data-sove');
+            document.getElementById('editModal').style.display = 'flex';
+        }
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            var modal = document.getElementById('editModal');
+            if (event.target == modal) { modal.style.display = 'none'; }
+        }
+        </script>
+    </div>
+</body>
+</html>
